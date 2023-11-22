@@ -1,9 +1,9 @@
 from keras.models import load_model
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import numpy as np
 import cv2
-import os
+
 from PIL import Image
 from io import BytesIO
 
