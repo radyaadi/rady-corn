@@ -4,6 +4,8 @@ from flask_cors import CORS
 import numpy as np
 import cv2
 import os
+from PIL import Image
+from io import BytesIO
 
 app = Flask(__name__)
 CORS(app)
@@ -21,14 +23,14 @@ def classify():
         return jsonify({'error': 'No image uploaded'})
     
     # load image
-    file = request.files['image']
-    filename = file.filename
-    image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    file.save(image_path)
+    image_data = request.files['image'].read()
+    image = Image.open(BytesIO(image_data))
 
     # image prepocessing
-    img_prepocessed = image_prepocessing(image_path)
-    test_img_ex = np.expand_dims(img_prepocessed, axis=0)
+    new_image = np.array(image)
+    new_image = cv2.resize(new_image, (224, 224))
+    test_img = np.array(new_image) / 255
+    test_img_ex = np.expand_dims(test_img, axis=0)
 
     # classification
     vgg16_result = vgg16_model(test_img_ex)
@@ -44,14 +46,6 @@ def vgg16_model(test_img_ex):
     vgg16_classify = classes[predicted_class_index]
 
     return vgg16_classify
-
-# image prepocessing
-def image_prepocessing(image_path):
-    new_image = cv2.imread(image_path, cv2.IMREAD_COLOR)
-    new_image = cv2.resize(new_image, (224, 224))
-    test_img = np.array(new_image) / 255
-
-    return test_img
 
 # image uploads
 @app.route('/uploads/<path:filename>')
