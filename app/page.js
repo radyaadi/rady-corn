@@ -22,7 +22,7 @@ const Dashboard = () => {
       const formData = new FormData();
       formData.append('image', selectedFile);
 
-      fetch('http://localhost:3000/api/hello', {
+      fetch('http://localhost:3000/api/classify', {
         method: 'POST',
         body: formData,
       })
@@ -82,7 +82,7 @@ const Dashboard = () => {
                 <h2 className="text-[1.4rem] text-amber-800">classify...</h2>
               ) : (
                 <h2 className="text-[1.4rem] font-extrabold text-[#f65555]">
-                  {result['status']}
+                  {result['classify']}
                 </h2>
               )}
             </div>
